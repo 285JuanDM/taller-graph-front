@@ -1,9 +1,6 @@
 export function ContenedorEstudiantes() {
   return (
     <form className="formulario">
-      <label>Digita el ID</label>
-      <input type="number" />
-
       <label>Nombre</label>
       <input type="checkbox" />
 
