@@ -4,19 +4,16 @@ export function ContenedorEstudiantes() {
       <label>Nombre</label>
       <input type="checkbox" />
 
-      <label>Fecha nacimiento</label>
+      <label>Carrera</label>
       <input type="checkbox" />
 
-      <label>Carrera</label>
+      <label>Facultad</label>
       <input type="checkbox" />
 
       <label>Semestre</label>
       <input type="checkbox" />
 
       <label>Correo</label>
-      <input type="checkbox" />
-
-      <label>Promedio</label>
       <input type="checkbox" />
 
       <button type="button" className="btn-consultar">Consultar BD</button>
