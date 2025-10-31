@@ -1,32 +1,77 @@
+import { gql } from "@apollo/client";
+import { useLazyQuery } from "@apollo/client/react";
+import { useState } from "react";
+
 export function ContenedorGatos() {
+  const [breedId, setBreedId] = useState("");
+  const [fields, setFields] = useState({
+    name: false,
+    weight: false,
+    height: false,
+    lifeSpan: false,
+    bredFor: false,
+    breedGroup: false,
+  })
+
+  const handleChange = (e) => {
+    setFields({ ...fields, [e.target.name]: e.target.checked });
+  }
+
+  const buildQuery = () => {
+    const selected = Object.keys(fields).filter((key) => fields[key]);
+    if (selected.length === 0) return null;
+
+    return gql`
+      query ($breedId: String!) {
+        breed(breedId: $breedId) {
+          ${selected.join("\n")}
+        }
+      }
+    `
+  }
+
+  const [breed, { data, loading, error }] = useLazyQuery(buildQuery() || gql`query($id: ID!){breed(id:$id){id}}`);
+
+  const handleConsult = () => {
+    const q = buildQuery();
+    if (q && breedId) breed({ query: q, variables: { breedId } })
+  }
+
   return (
-    <form className="formulario">
+    <form className="formulario" onSubmit={(e) => e.preventDefault()}>
       <label>Digita el ID</label>
-      <input type="number" />
-      
+      <input type="text" value={breedId} onChange={(e) => setBreedId(e.target.value)} />
+
       <label>Nombre</label>
-      <input type="checkbox" />
+      <input name="name" type="checkbox" onChange={handleChange} />
 
       <label>Peso</label>
-      <input type="checkbox" />
+      <input name="weight" type="checkbox" onChange={handleChange} />
 
       <label>Altura</label>
-      <input type="checkbox" />
+      <input name="height" type="checkbox" onChange={handleChange} />
 
       <label>Esperanza de vida</label>
-      <input type="checkbox" />
+      <input name="lifeSpan" type="checkbox" onChange={handleChange} />
 
       <label>Criado para</label>
-      <input type="checkbox" />
+      <input name="bredFor" type="checkbox" onChange={handleChange} />
 
       <label>Grupo de raza</label>
-      <input type="checkbox" />
+      <input name="breedGroup" type="checkbox" onChange={handleChange} />
 
-      <button type="button" className="btn-consultar">Consultar API</button>
+
+      <button type="button" onClick={handleConsult} className="btn-consultar">
+        Consultar API
+      </button>
 
       <section className="resultado">
-        <p>Resultado...</p>
+        {loading && <p>Cargando...</p>}
+        {error && <p>Error: {error.message}</p>}
+        {data && (
+          <pre>{JSON.stringify(data.breed, null, 2)}</pre>
+        )}
       </section>
     </form>
-  )
+  );
 }
